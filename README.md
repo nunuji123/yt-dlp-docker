@@ -217,4 +217,30 @@ docker run -d \
   -v ./yt-dlp/downloads:/downloads \
   -v ./yt-dlp/config:/config \
   yt-dlp-docker
-``` 
+```
+
+### 部署故障排除
+
+如果在GitHub Actions部署过程中遇到以下错误：
+
+```
+ERROR: failed to solve: failed to push ghcr.io/USERNAME/yt-dlp-docker:latest: unexpected status from POST request to https://ghcr.io/v2/USERNAME/yt-dlp-docker/blobs/uploads/: 403 Forbidden
+```
+
+这表示GitHub Actions没有足够的权限将Docker镜像推送到GitHub Container Registry。请参阅 `docs/package-access-guide.md` 文件，按照详细步骤配置正确的权限。
+
+常见解决方案包括：
+
+1. 在仓库设置中配置工作流权限（Settings > Actions > General > Workflow permissions）
+2. 在工作流文件中添加权限配置
+3. 使用个人访问令牌（PAT）替代默认的GITHUB_TOKEN
+
+#### 使用个人访问令牌（PAT）
+
+如果您决定使用个人访问令牌，请按照以下步骤：
+
+1. 在GitHub账户设置中创建具有适当权限的PAT
+2. 将该令牌添加到仓库的Actions secrets中，命名为`GHCR_PAT`
+3. 使用替代工作流文件 `.github/workflows/deploy-with-pat.yml`
+
+这样设置后，GitHub Actions应该能够成功推送镜像到GitHub Container Registry。 

@@ -1,4 +1,4 @@
-name: Deploy with GitHub Codespaces
+name: Deploy with Personal Access Token
 
 on:
   push:
@@ -8,7 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # 添加权限配置
     permissions:
       contents: read
       packages: write
@@ -17,7 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          # 设置为0可以获取所有历史记录和标签
           fetch-depth: 0
           
       - name: Set up git identity
@@ -33,7 +31,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_PAT }}  # 使用PAT而不是GITHUB_TOKEN
           
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
