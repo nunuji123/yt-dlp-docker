@@ -1,0 +1,51 @@
+cache:
+  untracked: true
+  key: ## 设置 key: "$CI_COMMIT_REF_NAME" 会针对版本缓存，刚每次发版都得重新安装依赖
+  paths:
+    - node_modules/
+    - .pnpm-store
+
+stages:
+  - build_alpha
+  - deploy_alpha
+  - build_preview
+  - build_beta
+
+before_script:
+  - PATH=/usr/local/bin:$PATH
+  - export PATH
+  - whoami
+  - pwd
+  - echo $PATH
+  - echo $CI_COMMIT_REF_NAME
+  - export CI_TAG=$CI_COMMIT_REF_NAME
+
+build_alpha:
+  stage: build_alpha
+  script:
+    - whoami
+    - chmod +x ./scripts/build.sh
+    - ls -lsa ./scripts/build.sh
+    - ./scripts/build.sh testing
+    - docker_build.sh -p alpha -f Dockerfile
+  cache:
+    key: one-key-to-rule-them-all
+    paths:
+      - node_modules/
+  only:
+    - develop_qa
+  tags:
+    - lan
+    - nodejs-docker
+    - docker
+
+deploy_alpha:
+  stage: deploy_alpha
+  script:
+    - deploy.sh -p alpha -o xlfe -n xlfe
+  only:
+    - develop_qa
+  tags:
+    - lan
+    - nodejs-docker
+    - docker

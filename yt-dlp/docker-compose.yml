@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  yt-dlp:
+    image: jauderho/yt-dlp:latest
+    container_name: yt-dlp
+    volumes:
+      # 将下载的内容保存到主机的./downloads目录
+      - ./downloads:/downloads
+      # 挂载配置文件
+      - ./config:/config
+    environment:
+      # 可以设置代理环境变量（如需要）
+      # - HTTP_PROXY=http://proxy:port
+      # - HTTPS_PROXY=http://proxy:port
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    # 使用此命令让容器保持运行（可选）
+    # 如果不需要保持容器一直运行，可以移除此行或用使用示例中的方法运行容器
+    # command: tail -f /dev/null 
